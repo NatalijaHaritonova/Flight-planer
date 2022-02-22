@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "10375321-ade9-4111-9079-0401d7c29cda": {
+      "ProjectGuid": "10375321-ade9-4111-9079-0401d7c29cda",
+      "DisplayName": "FlightPlanner",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
