@@ -14,15 +14,35 @@ namespace FlightPlanner.Controllers
         [Route("flights/{id}")]
         public IActionResult GetFlights(int id)
         {
-            return NotFound();
+            var flight = FlightStorage.GetFlight(id);
+            if (flight == null)
+                return NotFound();
+            return Ok(flight);
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [Route("flights/{id}")]
+        public IActionResult DeleteFlights(int id)
+        {
+            FlightStorage.DeleteFlight(id);
+            return Ok();
         }
 
         [HttpPut, Authorize]
         [Route("flights")]
         public IActionResult PutFlights(AddFlightRequest request)
         {
+            if (!FlightStorage.IsValid(request))
+                return BadRequest();
+
+            if (FlightStorage.Exists(request))
+                return Conflict();
+
             var flight = FlightStorage.AddFlight(request);
             return Created("", flight);
         }
+
+
     }
 }
