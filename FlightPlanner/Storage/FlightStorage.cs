@@ -26,7 +26,22 @@ namespace FlightPlanner.Storage
         {
             return _flights.SingleOrDefault(f => f.Id == id);
         }
+        
+        public static List<Airport> FindAirports(string userInput)
+        {
+            userInput = userInput.ToLower().Trim();
+            var fromAirport = _flights.Where(a =>
+            a.From.AirportName.ToLower().Trim().Contains(userInput) ||
+            a.From.Country.ToLower().Trim().Contains(userInput) ||
+            a.From.City.ToLower().Trim().Contains(userInput)).Select(a => a.From).ToList();
 
+            var toAirport = _flights.Where(a =>
+            a.To.AirportName.ToLower().Trim().Contains(userInput) ||
+            a.To.Country.ToLower().Trim().Contains(userInput) ||
+            a.To.City.ToLower().Trim().Contains(userInput)).Select(a => a.To).ToList();
+
+            return fromAirport.Concat(toAirport).ToList();
+        }
         public static void DeleteFlight(int id)
         {
             var flight = GetFlight(id);
