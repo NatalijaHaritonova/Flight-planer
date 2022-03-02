@@ -64,7 +64,7 @@ namespace FlightPlanner.Storage
             f.To.AirportName.ToLower().Trim() == request.To.AirportName.ToLower().Trim());
         }
 
-        public static bool IsValid(AddFlightRequest request)
+        public static bool IsValidAdd(AddFlightRequest request)
         {
             if (request == null)
                 return false;
@@ -99,7 +99,20 @@ namespace FlightPlanner.Storage
                 return false;
             
             return true;
+        }
 
+        public static PageResult SearchFlights()
+        {
+            return new PageResult(_flights);
+        }
+
+        public static bool IsValidSearch(SearchFlightRequest request)
+        {
+            if (request.From == request.To || request.From == null || request.To == null || request.DepartureDate == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
