@@ -1,4 +1,5 @@
 ﻿using FlightPlanner.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightPlanner.Storage
 {
@@ -22,20 +23,33 @@ namespace FlightPlanner.Storage
             return flight;
         }
 
+        public static Flight ConvertToFlight(AddFlightRequest request)
+        {
+            var flight = new Flight
+            {
+                From = request.From,
+                To = request.To,
+                ArrivalTime = request.ArrivalTime,
+                DepartureTime = request.DepartureTime,
+                Carrier = request.Carrier,
+            };
+            return flight;
+        }
+
         public static Flight GetFlight(int id)
         {
             return _flights.SingleOrDefault(f => f.Id == id);
         }
         
-        public static List<Airport> FindAirports(string userInput)
+        public static List<Airport> FindAirports(string userInput, FlightPlannerDbContext context)
         {
             userInput = userInput.ToLower().Trim();
-            var fromAirport = _flights.Where(a =>
+            var fromAirport = context.Flights.Where(a =>
             a.From.AirportName.ToLower().Trim().Contains(userInput) ||
             a.From.Country.ToLower().Trim().Contains(userInput) ||
             a.From.City.ToLower().Trim().Contains(userInput)).Select(a => a.From).ToList();
 
-            var toAirport = _flights.Where(a =>
+            var toAirport = context.Flights.Where(a =>
             a.To.AirportName.ToLower().Trim().Contains(userInput) ||
             a.To.Country.ToLower().Trim().Contains(userInput) ||
             a.To.City.ToLower().Trim().Contains(userInput)).Select(a => a.To).ToList();
@@ -101,9 +115,16 @@ namespace FlightPlanner.Storage
             return true;
         }
 
-        public static PageResult SearchFlights()
+        public static PageResult SearchFlights(SearchFlightRequest request, FlightPlannerDbContext context)
         {
-            return new PageResult(_flights);
+            var searchFlight = context.Flights.
+                Include(f => f.From).
+                Include(f => f.To).
+                Where(f =>
+                f.From.AirportName.ToLower().Trim() == request.From.ToLower().Trim() &&
+                f.To.AirportName.ToLower().Trim() == request.To.ToLower().Trim() &&
+                f.DepartureTime.Substring(0, 10) == request.DepartureDate.Substring(0, 10)).ToList();
+            return new PageResult(searchFlight);
         }
 
         public static bool IsValidSearch(SearchFlightRequest request)

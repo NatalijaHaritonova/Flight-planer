@@ -1,4 +1,5 @@
 ﻿using FlightPlanner.Handlers;
+using FlightPlanner.Storage;
 using Microsoft.AspNetCore.Authentication;
 
 namespace FlightPlanner
@@ -23,6 +24,7 @@ namespace FlightPlanner
             builder.Services.AddSwaggerGen();
             builder.Services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            builder.Services.AddDbContext<FlightPlannerDbContext>(ServiceLifetime.Scoped);
         }
 
         private static void Configure(WebApplication app)
