@@ -8,6 +8,7 @@
 
         public PageResult(List<Flight> flightList)
         {
+            Page = 0;
             Items = flightList;
             TotalItems = Items.Count;
         }
